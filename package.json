@@ -1,0 +1,26 @@
+{
+  "name": "birdbot",
+  "version": "1.0.0",
+  "description": "Twitter bot to retweet tweets with match hashtag",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "keywords": [
+    "twitter",
+    "birdbot",
+    "twitterbot"
+  ],
+  "author": "Marcos Mendes @marcoshmendes",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.6.1",
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.4",
+    "twitter": "^1.7.1"
+  },
+  "devDependencies": {
+    "morgan": "^1.9.1"
+  }
+}
