@@ -1,7 +1,8 @@
+require('dotenv').config();
+
 var Twitter = require('twitter');
 var config = require('../config/config');
 var async = require('async');
-require('dotenv').config();
 
 var client = new Twitter({
     consumer_key: process.env.CONSUMER_KEY,
@@ -36,12 +37,11 @@ function start (req, res) {
             var searchResultIds = results.search;
 
             retweet(searchResultIds, function(response) {
-                console.log('Retweets', response);
                 done(null, response);
             });
         }]
     }, function(err, results) {
-        console.log('Finnish' + new Date(), results);
+        console.log('SUCCESS :' + new Date(), results);
     });
 }
 
@@ -55,11 +55,9 @@ function retweet(tweetIds, callback) {
                 return;
             }
 
-            console.log('Retweet Response', tweet);
             innerCallback(tweet);
         });
     }, function(err, results) {
-        console.log('ACABOU', results);
         callback(results);
     });
 }
@@ -70,7 +68,7 @@ function searchTweets(hashtag, mention, callback) {
         q: hashtag
     };
 
-    client.get('search/tweets', {q: 'botmm27'}, function(error, tweets, response) {
+    client.get('search/tweets', search, function(error, tweets, response) {
         if (error) {
             console.log('ERROR SEARCH', error);
             return;
@@ -88,7 +86,7 @@ function getTweetIdsWithMention(data, mention) {
         if (tweet.entities.user_mentions.length) {
             tweet.entities.user_mentions.forEach(function(mentions) {
                 if (mentions.screen_name === mention) {
-                    tweetIds.push(tweet.id);
+                    tweetIds.push(tweet.id_str);
                 }
             })
         }
