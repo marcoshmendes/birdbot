@@ -1,4 +1,4 @@
-# Birdbot 1.0
+# NodeJS - Birdbot 1.0
 
 This is an twitter bot to retweet based on hashtag and mention. 
 This script was created to run periodically by task running like CRON, however you could run it locally following the steps bellow.
