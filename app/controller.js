@@ -41,7 +41,7 @@ function start (req, res) {
             });
         }]
     }, function(err, results) {
-        console.log('SUCCESS :' + new Date(), results);
+        res.json(200, 'Tweets found' + results.search.length);
     });
 }
 
