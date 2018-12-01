@@ -23,7 +23,7 @@ npm install
 ### 3 - Route
 
 ```
-POST http://localhost:3001/api/search
+POST http://localhost:3004/api/search
 ```
 
 Body :
@@ -35,4 +35,11 @@ Body :
 }
 ```
 
+Response:
 
+```
+{
+    "found_including_duplicate": 15,
+    "retweeted": 0
+}
+```
