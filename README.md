@@ -20,7 +20,7 @@ ACCESS_TOKEN_SECRET = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
 npm install
 ```
 
-### 3 - Run NPM INSTALL to install dependencies
+### 3 - Run NPM START to start server
 
 ```
 npm start
