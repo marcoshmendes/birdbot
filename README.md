@@ -1,7 +1,7 @@
 # Birdbot 1.0
 
-This is an twitter bot to retweet based on hashtag and mention. This script was created to run periodically by job running.
-But you could run it locally following the steps bellow.
+This is an twitter bot to retweet based on hashtag and mention. 
+This script was created to run periodically by task running like CRON, however you could run it locally following the steps bellow.
 
 ### 1 - Create an **.env** file in the project root folder:
 
@@ -20,7 +20,13 @@ ACCESS_TOKEN_SECRET = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
 npm install
 ```
 
-### 3 - Route
+### 3 - Run NPM INSTALL to install dependencies
+
+```
+npm start
+```
+
+### 4 - Route
 
 ```
 POST http://localhost:3004/api/search
