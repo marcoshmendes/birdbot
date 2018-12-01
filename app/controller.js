@@ -41,24 +41,35 @@ function start (req, res) {
             });
         }]
     }, function(err, results) {
-        res.json(200, 'Tweets found' + results.search.length);
+        if (err) {
+            res.status(500).json({
+                'message': err
+            });
+        }
+
+        res.status(200).json({
+            'found_including_duplicate': results.search.length,
+            'retweeted': results.retweet
+        });
     });
 }
 
 function retweet(tweetIds, callback) {
     var ids = tweetIds;
+    var countRetweets = ids.length;
 
     async.map(ids, function(tweetId, innerCallback) {
         client.post('statuses/retweet/' + tweetId, function(error, tweet, response) {
             if (error) {
-                console.log('ERROR RETWEET', error);
+                countRetweets--;
+                innerCallback();
                 return;
             }
 
             innerCallback(tweet);
         });
     }, function(err, results) {
-        callback(results);
+        callback(countRetweets);
     });
 }
 
@@ -70,7 +81,7 @@ function searchTweets(hashtag, mention, callback) {
 
     client.get('search/tweets', search, function(error, tweets, response) {
         if (error) {
-            console.log('ERROR SEARCH', error);
+            callback(error);
             return;
         }
 
