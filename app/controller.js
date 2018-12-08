@@ -1,10 +1,10 @@
 require('dotenv').config();
 
-var Twitter = require('twitter');
-var config = require('../config/config');
-var async = require('async');
-
-var client = new Twitter({
+const async = require('async');
+const Twitter = require('twitter');
+const entities = require('../config/html-entities');
+const config = require('../config/config');
+const client = new Twitter({
     consumer_key: process.env.CONSUMER_KEY,
     consumer_secret: process.env.CONSUMER_SECRET,
     access_token_key: process.env.ACCESS_TOKEN_KEY,
@@ -12,98 +12,125 @@ var client = new Twitter({
 });
 
 function start (req, res) {
-    var hashtag = req.body['hashtag'];
-    var mention = req.body['mention'];
+    const query = buildQuery(req.body);
 
-    if (!hashtag || !mention) {
-        res.status(401).json({
-            'error': 'no_data_provided'
+    if (!query) {
+        res.status(500).json({
+            'message': 'invalid_search'
         });
         return;
     }
 
     async.auto({
-        search: function(done) {
-            searchTweets(hashtag, mention, function(tweetIds) {
-                if (!tweetIds || !tweetIds.length) {
-                    done('data_not_found');
+        find: (done) => {
+            search(query, (err, tweetIds) => {
+                if (err) {
+                    res.status(500).json({
+                        'message': err
+                    });
                     return;
                 }
 
                 done(null, tweetIds);
             });
         },
-        retweet: ['search', function(results, done) {
-            var searchResultIds = results.search;
+        retweet: ['find', (results, done) => {
+            const tweetIds = results.find;
 
-            retweet(searchResultIds, function(response) {
-                done(null, response);
+            retweet(tweetIds, (err, retweetsNumber) => {
+                if (err) {
+                    res.status(500).json({
+                        'message': err
+                    });
+                    return;
+                }
+
+                done(null, retweetsNumber);
             });
         }]
-    }, function(err, results) {
+    }, (err, results) => {
         if (err) {
             res.status(500).json({
                 'message': err
             });
+            return;
         }
 
         res.status(200).json({
-            'found_including_duplicate': results.search.length,
+            'found_including_already_retweeted': results.find.length,
             'retweeted': results.retweet
         });
     });
 }
 
 function retweet(tweetIds, callback) {
-    var ids = tweetIds;
-    var countRetweets = ids.length;
+    const ids = tweetIds;
+    let countRetweets = ids.length;
 
-    async.map(ids, function(tweetId, innerCallback) {
-        client.post('statuses/retweet/' + tweetId, function(error, tweet, response) {
-            if (error) {
+    async.map(ids, (tweetId, innerCallback) => {
+        client.post('statuses/retweet/' + tweetId, (err, tweet, response) => {
+            if (err) {
                 countRetweets--;
                 innerCallback();
                 return;
             }
 
-            innerCallback(tweet);
+            innerCallback(null, tweet);
         });
-    }, function(err, results) {
-        callback(countRetweets);
-    });
-}
-
-function searchTweets(hashtag, mention, callback) {
-    var tweetIds;
-    var search = {
-        q: hashtag
-    };
-
-    client.get('search/tweets', search, function(error, tweets, response) {
-        if (error) {
-            callback(error);
+    }, (err, results) => {
+        if (err) {
+            callback(err);
             return;
         }
 
-        tweetIds = getTweetIdsWithMention(tweets.statuses, mention);
-        callback(tweetIds);
+        callback(null, countRetweets);
     });
 }
 
-function getTweetIdsWithMention(data, mention) {
-    var tweetIds = [];
-
-    data.forEach(function(tweet) {
-        if (tweet.entities.user_mentions.length) {
-            tweet.entities.user_mentions.forEach(function(mentions) {
-                if (mentions.screen_name === mention) {
-                    tweetIds.push(tweet.id_str);
-                }
-            })
+function search(query, callback) {
+    let tweetIds = [];
+    const criteria = {
+        q: query
+    };
+    
+    client.get('search/tweets', criteria, (err, tweets, response) => {
+        if (err) {
+            callback(err);
+            return;
         }
-    });
 
-    return tweetIds;
+        tweets.statuses.forEach((tweet) => {
+            tweetIds.push(tweet.id_str);
+        });
+        
+        callback(null, tweetIds);
+    });
+}
+
+function buildQuery(params) {
+    let query;
+
+    if (!params['mention'] && !params['hashtag'] && !params['words']) {
+        return 'no_criteria_provided';
+    }
+
+    if (params['mention']) {
+        query = entities.profileSymbol + params['mention'];
+    }
+
+    if (params['hashtag']) {
+        query += entities.spaceSymbol + entities.hashtagSymbol + params['hashtag'];
+    }
+
+    if (params['words'] && Array.isArray(params['words'])) {
+        if (params['words'].length) {
+            params['words'].forEach((word) => {
+                query += entities.spaceSymbol + word;
+            });
+        }
+    }
+
+    return query;
 }
 
 module.exports = {

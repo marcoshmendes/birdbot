@@ -1,5 +1,5 @@
-var controller = require('./controller');
+const controller = require('./controller');
 
 module.exports = function(app) {
-    app.route('/api/search').post(controller.start);
+    app.route('/api/retweet').post(controller.start);
 };

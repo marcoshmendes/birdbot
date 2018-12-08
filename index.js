@@ -1,8 +1,8 @@
-var express = require('./config/express');
-var config = require('./config/config');
-var app = express();
+const express = require('./config/express');
+const config = require('./config/config');
+const app = express();
 
 app.listen(config.port);
 
 module.exports = app;
-console.log('server running - Port ', config.port);
+console.log('Running on port ', config.port);
