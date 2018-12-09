@@ -2,8 +2,7 @@ require('dotenv').config();
 
 const async = require('async');
 const Twitter = require('twitter');
-const entities = require('../config/html-entities');
-const config = require('../config/config');
+const queryBuilder = require('../app/query-builder');
 const client = new Twitter({
     consumer_key: process.env.CONSUMER_KEY,
     consumer_secret: process.env.CONSUMER_SECRET,
@@ -12,9 +11,9 @@ const client = new Twitter({
 });
 
 function start (req, res) {
-    const query = buildQuery(req.body);
+    const query = queryBuilder.set(req.body);
 
-    if (!query) {
+    if (!query || query === 'no_criteria_provided') {
         res.status(500).json({
             'message': 'invalid_search'
         });
@@ -105,32 +104,6 @@ function search(query, callback) {
         
         callback(null, tweetIds);
     });
-}
-
-function buildQuery(params) {
-    let query;
-
-    if (!params['mention'] && !params['hashtag'] && !params['words']) {
-        return 'no_criteria_provided';
-    }
-
-    if (params['mention']) {
-        query = entities.profileSymbol + params['mention'];
-    }
-
-    if (params['hashtag']) {
-        query += entities.spaceSymbol + entities.hashtagSymbol + params['hashtag'];
-    }
-
-    if (params['words'] && Array.isArray(params['words'])) {
-        if (params['words'].length) {
-            params['words'].forEach((word) => {
-                query += entities.spaceSymbol + word;
-            });
-        }
-    }
-
-    return query;
 }
 
 module.exports = {
