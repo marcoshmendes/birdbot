@@ -91,7 +91,7 @@ function search(query, callback) {
     const criteria = {
         q: query
     };
-    
+
     client.get('search/tweets', criteria, (err, tweets, response) => {
         if (err) {
             callback(err);

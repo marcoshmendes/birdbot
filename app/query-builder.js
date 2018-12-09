@@ -8,16 +8,16 @@ function set(params) {
         return 'no_criteria_provided';
     }
 
-    if (params['mention']) {
-        query = operators.mentionSymbol + params['mention'];
+    if (params['hashtag']) {
+        query = operators.hashtagSymbol + params['hashtag'];
     }
 
-    if (params['hashtag']) {
+    if (params['mention']) {
         if (query) {
             query += operators.spaceSymbol;
         }
 
-        query += operators.hashtagSymbol + params['hashtag'];
+        query += operators.mentionSymbol + params['mention'];
     }
 
     if (params['from']) {
@@ -73,7 +73,7 @@ function set(params) {
             if (query) {
                 query += operators.spaceSymbol;
             }
-            
+
             query += operators.hashtagSymbol + params['or'].keys[0] + operators.spaceSymbol + 
             operators.orSymbol + operators.spaceSymbol + operators.hashtagSymbol + params['or'].keys[1];
         }
