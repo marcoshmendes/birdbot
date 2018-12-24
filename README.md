@@ -251,9 +251,9 @@ Example Body :
 
 ```javascript
 {
-  hashtag: 'superbowl',
-  mention: 'nasa',
-  words: ['one', 'two']
+  hashtag: "superbowl",
+  mention: "nasa",
+  words: ["one", "two"]
 }
 ```
 
