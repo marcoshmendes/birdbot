@@ -134,8 +134,6 @@ function search(req, res) {
 function tweet(req, res) {
     const text = req.body['text'];
 
-    console.log(text)
-
     if (!text) {
         res.status(400).json({
             'message': 'no_text_provided'
