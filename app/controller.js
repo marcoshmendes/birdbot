@@ -9,7 +9,7 @@ function retweet(req, res) {
     const query = queryBuilder.set(req.body);
 
     if (!query || query === 'no_criteria_provided') {
-        res.status(500).json({
+        res.status(400).json({
             'message': 'invalid_search'
         });
         return;
@@ -61,7 +61,7 @@ function like(req, res) {
     const query = queryBuilder.set(req.body);
 
     if (!query || query === 'no_criteria_provided') {
-        res.status(500).json({
+        res.status(400).json({
             'message': 'invalid_search'
         });
         return;
@@ -113,7 +113,7 @@ function search(req, res) {
     const query = queryBuilder.set(req.body);
 
     if (!query || query === 'no_criteria_provided') {
-        res.status(500).json({
+        res.status(400).json({
             'message': 'invalid_search'
         });
         return;
@@ -131,8 +131,40 @@ function search(req, res) {
     });
 }
 
+function tweet(req, res) {
+    const text = req.body['text'];
+
+    console.log(text)
+
+    if (!text) {
+        res.status(400).json({
+            'message': 'no_text_provided'
+        });
+        return;
+    }
+
+    if (text.length > 280) {
+        res.status(400).json({
+            'message': 'characters_limit_exceeded'
+        });
+        return;
+    }
+
+    ActionService.tweet(text, (err, tweet) => {
+        if (err) {
+            res.status(500).json({
+                'message': err
+            });
+            return;
+        }
+
+        res.status(200).json(tweet);
+    });
+}
+
 module.exports = {
     retweet: retweet,
     search: search,
+    tweet: tweet,
     like: like
 }

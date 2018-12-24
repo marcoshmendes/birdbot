@@ -90,9 +90,21 @@ function like(tweetIds, callback) {
     });
 }
 
+function tweet(text, callback) {
+    client.post('statuses/update', { status: text }, (err, tweet, response) => {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        callback(null, tweet);
+    });
+}
+
 module.exports = {
     search: search,
     retweet: retweet,
+    tweet: tweet,
     like: like,
     get: get
 }
