@@ -1,7 +1,7 @@
 
 # NodeJS - Birdbot 1.0
 
-A Twitter bot made in Node.js. This API was created to be executed by a time-based task runner like cron-job, however you could run it locally and call endpoints by yourself.
+A Twitter bot made in Node.js to post, retrieve and engage with tweets. This API was created to be executed by a time-based task runner like cron-job, however you could run it locally and call endpoints by yourself.
 
 # What can i do with birdbot?
 
