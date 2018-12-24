@@ -109,7 +109,30 @@ function like(req, res) {
     });
 }
 
+function search(req, res) {
+    const query = queryBuilder.set(req.body);
+
+    if (!query || query === 'no_criteria_provided') {
+        res.status(500).json({
+            'message': 'invalid_search'
+        });
+        return;
+    }
+
+    ActionService.get(query, (err, tweets) => {
+        if (err) {
+            res.status(500).json({
+                'message': err
+            });
+            return;
+        }
+
+        res.status(200).json(tweets);
+    });
+}
+
 module.exports = {
     retweet: retweet,
+    search: search,
     like: like
 }

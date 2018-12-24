@@ -27,6 +27,21 @@ function search(query, callback) {
     });
 }
 
+function get(query, callback) {
+    const criteria = {
+        q: query
+    };
+
+    client.get('search/tweets', criteria, (err, tweets, response) => {
+        if (err) {
+            callback(err);
+            return;
+        }
+        
+        callback(null, tweets);
+    });
+}
+
 function retweet(tweetIds, callback) {
     const ids = tweetIds;
     let countRetweets = ids.length;
@@ -78,5 +93,6 @@ function like(tweetIds, callback) {
 module.exports = {
     search: search,
     retweet: retweet,
-    like: like
+    like: like,
+    get: get
 }
